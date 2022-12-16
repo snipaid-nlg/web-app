@@ -1,0 +1,13 @@
+bin/
+include/
+lib/
+.DS_STORE
+.Python
+*.py[cod]
+
+# Ignore all environment variable settings for now
+.env*
+
+# Ignore files collected with collectstatic
+
+static_cdn/

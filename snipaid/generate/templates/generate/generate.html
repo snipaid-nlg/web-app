@@ -1,0 +1,103 @@
+{% extends "index/index.html" %}
+
+{% block content %}
+
+<form action="/generate" method="GET" role="search" id="searchForm">
+  <div class="mb-3">
+    <textarea class="form-control" id="articleInput" rows="10" placeholder="Enter your article ..."></textarea>
+  </div>
+  <div class="alert alert-danger" role="alert">
+    Warning! This demo is for test use only. The model can produce false information. Read more about the limitations 
+    <a href="https://www.eleuther.ai/faq/" target="_blank">here</a>.
+  </div>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="consent">
+    <label class="form-check-label" for="consent">
+      I have understood that this model can produce false information. I will not use the generated text without fact checking.
+    </label>
+  </div>
+  <button class="btn btn-primary mt-4" type="button" id="submitText" disabled>Please generate a teaser!</button>
+</form>
+<hr class="mt-5 pb-4" />
+<div class="d-none mb-3" id="loadingDiv">
+  <div class="spinner-grow text-secondary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p id="waitedSeconds" class="text-secondary"><small><i>Please note: Text generation can take up to 1 minute.</i></small></p>
+</div>
+<div id="resultDiv" class="d-none">
+  <h3 id="resHeadline"></h3>
+  <div id="resTeasers"></div>
+  <p id="resTeaser" class="lead"></p>
+</div>
+
+
+<script>
+window.onload = function() {
+  var consent = document.getElementById('consent');
+  var submitText = document.getElementById('submitText');
+  var articleInput = document.getElementById('articleInput');
+  var loadingDiv = document.getElementById('loadingDiv');
+  var resultDiv = document.getElementById('resultDiv');
+  var resTeaser = document.getElementById('resTeaser');
+  var resHeadline = document.getElementById('resHeadline');
+  console.log('resultDiv', resultDiv)
+
+  consent.addEventListener('change', (event) => {
+    console.log('event', event.currentTarget.checked)
+    if (event.currentTarget.checked) {
+      submitText.disabled = false;
+    } else {
+      submitText.disabled = true;
+    }
+  }, false);
+
+  var isHeadlineLoaded = false;
+  var isTeaserLoaded = false;
+  var setLoading = function(to) {
+    if (to) {
+      isHeadlineLoaded = false;
+      isTeaserLoaded = false;
+      loadingDiv.classList.remove("d-none");
+      submitText.classList.add("d-none");
+    } else if (isHeadlineLoaded && isTeaserLoaded) {
+      loadingDiv.classList.add("d-none")
+      submitText.classList.remove("d-none");
+    }
+  }
+
+  submitText.addEventListener('click', (event) => {
+    console.log('event', 'articleInput', articleInput.value)
+    setLoading(true);
+    resultDiv.classList.add('d-none')
+
+    let prompts = []
+
+    fetch('/generate/?' + new URLSearchParams({
+      fulltext: articleInput.value,
+      gen_type: "headline"
+    }))
+      .then((response) => response.json())
+      .then((data) => {
+        isHeadlineLoaded = true;
+        resHeadline.innerText = data.output;
+        setLoading(false);
+        resultDiv.classList.remove('d-none')
+      });
+    
+    fetch('/generate/?' + new URLSearchParams({
+      fulltext: articleInput.value,
+      gen_type: "teaser"
+    }))
+      .then((response) => response.json())
+      .then((data) => {
+        isTeaserLoaded = true;
+        resTeaser.innerText = data.output;
+        setLoading(false);
+        resultDiv.classList.remove('d-none')
+      });
+  })
+}
+
+</script>
+{% endblock %}
