@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  web:
+    image: snipaid-demo:0.0 # image alongside build tags container with image name
+    build: .
+    command: python /app/snipaid/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
