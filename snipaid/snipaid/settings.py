@@ -141,3 +141,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 BANANA_API_KEY = env('BANANA_API_KEY')
+BANANA_MODEL_KEY = env('BANANA_MODEL_KEY')
