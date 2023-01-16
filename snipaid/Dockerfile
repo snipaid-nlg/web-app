@@ -10,8 +10,10 @@ RUN mkdir -p $DockerHOME
 # where your code lives  
 WORKDIR $DockerHOME  
 
-# set environment variables  
+# set environment variables
+# prevent Python from writing pyc files to disc
 ENV PYTHONDONTWRITEBYTECODE 1
+# prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED 1  
 
 # install dependencies  
