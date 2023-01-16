@@ -26,20 +26,20 @@ env = environ.Env(
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Take environment variables from .env file
-environ.Env.read_env(os.path.join(Path(BASE_DIR).parent, '.env'))
+# environ.Env.read_env(os.path.join(Path(BASE_DIR).parent, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # False if not in os.environ because of casting above
-DEBUG = env('DEBUG')
+DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -140,5 +140,5 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-BANANA_API_KEY = env('BANANA_API_KEY')
-BANANA_MODEL_KEY = env('BANANA_MODEL_KEY')
+BANANA_API_KEY = os.environ.get('BANANA_API_KEY')
+BANANA_MODEL_KEY = os.environ.get('BANANA_MODEL_KEY')
