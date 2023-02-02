@@ -83,7 +83,7 @@ window.onload = function() {
   var resHeadline = document.getElementById('resHeadline');
   var webhookInput = document.getElementById('webhookInput')
   var sendToWebhook = document.getElementById('sendToWebhook')
-  console.log('resultDiv', resultDiv)
+  var webhookStatus = document.getElementById('webhookStatus')
 
   consent.addEventListener('change', (event) => {
     console.log('event', event.currentTarget.checked)
@@ -149,9 +149,29 @@ webhookInput.addEventListener('change', (event) => {
   }
 });
 
+// Default: Webhook status alert is hidden
+$("#webhookStatus").hide();
+
+// Alert webhook status with regards to HTTP status code
+const alertWebhookStatus = (status) => {
+  if (status / 100 == 2){
+    // HTTP 2xx successful
+    webhookStatus.classList.remove("alert-secondary")
+    webhookStatus.classList.add("alert-success")
+    webhookStatus.innerText = "Success!"
+  } else {
+    // Something is wrong
+    webhookStatus.classList.remove("alert-success")
+    webhookStatus.classList.add("alert-secondary")
+    webhookStatus.innerText = `Data was not received! Receiver responded with HTTP status ${status}.`
+  }
+  // Show the alert
+  $("#webhookStatus").fadeIn().delay(3000).fadeOut();
+}
+
 sendToWebhook.addEventListener('click', async (event) => {
   const endpoint = webhookInput.value;
-  const webhookResponse = await fetch(endpoint,
+  const response = await fetch(endpoint,
       {
         headers: {
             'Content-Type': 'application/json'
@@ -163,6 +183,7 @@ sendToWebhook.addEventListener('click', async (event) => {
           "teaser": resTeaser.value
         })
     });
+  alertWebhookStatus(response.status);
 });
 
 </script>
