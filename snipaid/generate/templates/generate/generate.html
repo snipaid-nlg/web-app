@@ -90,7 +90,6 @@ window.onload = function() {
   var webhookStatus = document.getElementById('webhookStatus')
 
   consent.addEventListener('change', (event) => {
-    console.log('event', event.currentTarget.checked)
     if (event.currentTarget.checked) {
       submitText.disabled = false;
     } else {
@@ -113,7 +112,6 @@ window.onload = function() {
   }
 
   submitText.addEventListener('click', (event) => {
-    console.log('event', 'articleInput', articleInput.value)
     setLoading(true);
     resultDiv.classList.add('d-none')
 
