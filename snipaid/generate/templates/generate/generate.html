@@ -26,6 +26,7 @@
   <p id="waitedSeconds" class="text-secondary"><small><i>Please note: Text generation can take up to 1 minute.</i></small></p>
 </div>
 <div id="resultDiv" class="d-none">
+  <form action="/webhook" method="GET" role="search" id="searchForm">
     <div class="form-group row mb-3">
       <label for="resHeadline" class="col-sm-1 col-form-label col-form-label-lg">Title</label>
       <div class="col-sm-11">
@@ -38,6 +39,36 @@
         <textarea class="form-control form-control" id="resTeaser" rows="3"></textarea>
       </div>
     </div>
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header" id="headingWebhook">
+          <h5 class="mb-0">
+            <button class="btn btn-link link-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWebhook" aria-expanded="true" aria-controls="collapseWebhook">
+              + Webhook (optional)
+            </button>
+          </h5>
+        </div>
+        <div id="collapseWebhook" class="collapse" aria-labelledby="headingWebhook" data-bs-parent="#accordion">
+          <div class="card-body">
+            <p>
+              SnipAId can notify a personal endpoint with the results once generated.<br/>
+              Results will be provided as JSON body in the following format.
+            </p>
+            <pre><code>{
+fulltext: ...,
+title: ...,
+teaser: ...,
+}</code></pre>
+            <input class="form-control mt-3" id="webhookInput" type="URL" rows="1" placeholder="Enter the url of your webhook endpoint..." required></input>
+            <button class="btn btn-primary mt-3" type="button" id="sendToWebhook" disabled>Send</button>
+            <div class="alert alert-success mt-3" id="webhookStatus" role="alert">
+              Successfully sent!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 
 
@@ -50,6 +81,8 @@ window.onload = function() {
   var resultDiv = document.getElementById('resultDiv');
   var resTeaser = document.getElementById('resTeaser');
   var resHeadline = document.getElementById('resHeadline');
+  var webhookInput = document.getElementById('webhookInput')
+  var sendToWebhook = document.getElementById('sendToWebhook')
   console.log('resultDiv', resultDiv)
 
   consent.addEventListener('change', (event) => {
@@ -107,6 +140,30 @@ window.onload = function() {
       });
   })
 }
+
+webhookInput.addEventListener('change', (event) => {
+  if (event.currentTarget.validity.valid) {
+    sendToWebhook.disabled = false;
+  } else {
+    sendToWebhook.disabled = true;
+  }
+});
+
+sendToWebhook.addEventListener('click', async (event) => {
+  const endpoint = webhookInput.value;
+  const webhookResponse = await fetch(endpoint,
+      {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: "POST",
+        body: JSON.stringify({
+          "fulltext": articleInput.value,
+          "title": resHeadline.value,
+          "teaser": resTeaser.value
+        })
+    });
+});
 
 </script>
 {% endblock %}
