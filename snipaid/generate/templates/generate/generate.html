@@ -2,6 +2,7 @@
 
 {% block content %}
 
+<!-- Generator -->
 <form action="/generate" method="GET" role="search" id="searchForm">
   <div class="mb-3">
     <textarea class="form-control" id="articleInput" rows="10" placeholder="Enter your article ..."></textarea>
@@ -19,6 +20,7 @@
   <button class="btn btn-primary mt-4" type="button" id="submitText" disabled>Please generate title and teaser!</button>
 </form>
 <hr class="mt-5 pb-4" />
+<!-- Snippet Results-->
 <div class="d-none mb-3" id="loadingDiv">
   <div class="spinner-grow text-secondary" role="status">
     <span class="visually-hidden">Loading...</span>
@@ -39,6 +41,7 @@
         <textarea class="form-control form-control" id="resTeaser" rows="3"></textarea>
       </div>
     </div>
+    <!-- Webhook -->
     <div id="accordion">
       <div class="card">
         <div class="card-header" id="headingWebhook">
@@ -68,6 +71,7 @@ teaser: ...,
         </div>
       </div>
     </div>
+    <!-- End Webhook-->
   </form>
 </div>
 
