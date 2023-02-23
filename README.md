@@ -1,7 +1,7 @@
 ## Web App
 ### How to get started
 
-1. Folllow the instructions in the [model-server](https://github.com/snipaid-nlg/gptj-title-teaser-10k) repository to setup the model server.
+1. Folllow the instructions in the [model-server](https://github.com/snipaid-nlg/gptj-model-server) repository to setup the model server.
 2. Clone this repository.
 ```
 git clone https://github.com/snipaid-nlg/demo.git
