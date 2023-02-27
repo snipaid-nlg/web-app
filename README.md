@@ -13,11 +13,11 @@ Our Model: Title and teaser generation with our finetuned gpt-j model [gptj-titl
 1. Folllow the instructions in [gptj-title-teaser-10k](https://github.com/snipaid-nlg/gptj-title-teaser-10k) to setup the model server.
 2. Clone this repository.
 ```
-git clone https://github.com/snipaid-nlg/demo.git
+git clone https://github.com/snipaid-nlg/web-app.git
 ```
 3. Change directory to project directory.
 ```
-cd demo
+cd web-app
 ```
 4. Create a file with the name ".env".
 5. Insert the following content into the ".env" file. Replace Your-Personal-Banana-Api-Key, Your-Personal-Banana-Model-Key and Your-Strong-Secret-Key-For-Django with your own secret keys.
