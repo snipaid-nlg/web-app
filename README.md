@@ -1,16 +1,7 @@
-## Demo
-
-Baseline: Title and teaser generation for journalistic texts with vanilla GPT-J.
-
-https://user-images.githubusercontent.com/36483428/208447046-f70dadf4-8ec5-4108-b0fc-678147d35bb2.mp4
-
-Our Model: Title and teaser generation with our finetuned gpt-j model [gptj-title-teaser-10k](https://github.com/snipaid-nlg/gptj-title-teaser-10k).
-
-*Video coming soon...*
-
+## Web App
 ### How to get started
 
-1. Folllow the instructions in [gptj-title-teaser-10k](https://github.com/snipaid-nlg/gptj-title-teaser-10k) to setup the model server.
+1. Folllow the instructions in the [model-server](https://github.com/snipaid-nlg/gptj-model-server) repository to setup the model server.
 2. Clone this repository.
 ```
 git clone https://github.com/snipaid-nlg/demo.git
