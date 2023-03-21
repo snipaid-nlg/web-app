@@ -10,7 +10,7 @@ class SnippetGenerator:
         output = output.split('!')[0]
         return output
     
-    def clean_teaser(self, output):
+    def clean_text(self, output):
         output = ".".join(output.split('.')[:-1])
         output += '.'
         return output
@@ -53,7 +53,7 @@ class GPTJSnippetGenerator(SnippetGenerator):
         output = out['modelOutputs'][0]['output']
         # clean up output
         output = output.split("[Teaser]:")[1]
-        output = self.clean_teaser(output)
+        output = self.clean_text(output)
         return output
     
     def generate(self, gen_type, fulltext):
@@ -118,7 +118,49 @@ class BloomzSnippetGenerator(SnippetGenerator):
         out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
         output = out['modelOutputs'][0]['output']
         # clean up outputs
-        output = self.clean_teaser(output)
+        output = self.clean_text(output)
+        return output
+    
+    # Instance method to generate a summary for a fulltext with bloomz model.
+    def generate_summary(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "\nSummary in two to three sentences: ",
+            "params": {
+                "min_new_tokens": 50,
+                "max_new_tokens": 150,
+                "top_k": 50, 
+                "top_p": 0.75,
+                "no_repeat_ngram_size": 2,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up outputs
+        output = self.clean_text(output)
+        return output
+    
+    # Instance method to generate a summary for a fulltext with bloomz model.
+    def generate_keywords(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "\nKeywords: ",
+            "params": {
+                "min_new_tokens": 1,
+                "max_new_tokens": 80,
+                "repetition_penalty": 1.05,
+                "top_k": 50, 
+                "top_p": 0.75
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
         return output
     
     def generate(self, gen_type, fulltext):
@@ -126,6 +168,10 @@ class BloomzSnippetGenerator(SnippetGenerator):
             return self.generate_headline(fulltext)
         elif gen_type == "teaser":
             return self.generate_teaser(fulltext)
+        elif gen_type == "summary":
+            return self.generate_summary(fulltext)
+        elif gen_type == "keywords":
+            return self.generate_keywords(fulltext)
         else:
             raise Exception(f"Sorry, unknown gentype {gen_type} for bloomz model.")
     

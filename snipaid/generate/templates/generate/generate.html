@@ -33,22 +33,34 @@
   </div>
   <p id="waitedSeconds" class="text-secondary"><small><i>Please note: Text generation can take up to 1 minute.</i></small></p>
 </div>
-<div id="resultDiv" class="d-none">
+<div id="resultDiv">
   <form action="/webhook" method="GET" role="search" id="searchForm">
-    <div class="form-group row mb-3">
+    <div id="headlineDiv" class="form-group row mb-3 d-none">
       <label for="resHeadline" class="col-sm-1 col-form-label col-form-label-lg">Title</label>
       <div class="col-sm-11">
         <textarea class="form-control form-control-lg" id="resHeadline" rows="1"></textarea>
       </div>
     </div>
-    <div class="form-group row mb-3">
+    <div id="teaserDiv" class="form-group row mb-3 d-none">
       <label for="resTeaser" class="col-sm-1 col-form-label col-form-label">Teaser</label>
       <div class="col-sm-11">
         <textarea class="form-control form-control" id="resTeaser" rows="3"></textarea>
       </div>
     </div>
+    <div id="summaryDiv" class="form-group row mb-3 d-none">
+      <label for="resSummary" class="col-sm-1 col-form-label col-form-label">Summary</label>
+      <div class="col-sm-11">
+        <textarea class="form-control form-control" id="resSummary" rows="3"></textarea>
+      </div>
+    </div>
+    <div id="keywordsDiv" class="form-group row mb-3 d-none">
+      <label for="resKeywords" class="col-sm-1 col-form-label col-form-label">Keywords</label>
+      <div class="col-sm-11">
+        <textarea class="form-control form-control" id="resKeywords" rows="1"></textarea>
+      </div>
+    </div>
     <!-- Webhook -->
-    <div id="accordion">
+    <div id="accordion" class="d-none">
       <div class="card">
         <div class="card-header" id="headingWebhook">
           <h5 class="mb-0">
@@ -91,6 +103,13 @@ window.onload = function() {
   var resultDiv = document.getElementById('resultDiv');
   var resTeaser = document.getElementById('resTeaser');
   var resHeadline = document.getElementById('resHeadline');
+  var resSummary = document.getElementById('resSummary');
+  var resKeywords = document.getElementById('resKeywords');
+  var headlineDiv = document.getElementById('headlineDiv');
+  var teaserDiv = document.getElementById('teaserDiv');
+  var summaryDiv = document.getElementById('summaryDiv');
+  var keywordsDiv = document.getElementById('keywordsDiv');
+  var webhookDiv = document.getElementById('accordion')
   var webhookInput = document.getElementById('webhookInput')
   var sendToWebhook = document.getElementById('sendToWebhook')
   var webhookStatus = document.getElementById('webhookStatus')
@@ -98,6 +117,11 @@ window.onload = function() {
 
   model.addEventListener('change', (event) => {
     console.log("Selected model:", model.value)
+    headlineDiv.classList.add("d-none");
+    teaserDiv.classList.add("d-none");
+    summaryDiv.classList.add("d-none");
+    keywordsDiv.classList.add("d-none");
+    webhookDiv.classList.add("d-none");
   })
 
   consent.addEventListener('change', (event) => {
@@ -110,21 +134,44 @@ window.onload = function() {
 
   var isHeadlineLoaded = false;
   var isTeaserLoaded = false;
-  var setLoading = function(to) {
-    if (to) {
+  var isKeywordsLoaded = false;
+  var isSummaryLoaded = false;
+
+  var setLoading = function(isLoading) {
+    if (isLoading) {
+      // Set loading indicators
       isHeadlineLoaded = false;
       isTeaserLoaded = false;
+      isKeywordsLoaded = false;
+      isSummaryLoaded = false;
+      if (model.value == 'gptj') {
+        // Set loading indicators for snippets not supported with gptj to true for evaluation
+        isKeywordsLoaded = true;
+        isSummaryLoaded = true;
+      }
+      // Show loading div
       loadingDiv.classList.remove("d-none");
+      // Hide snippet divs, webhook and submit button
+      headlineDiv.classList.add("d-none");
+      teaserDiv.classList.add("d-none");
+      summaryDiv.classList.add("d-none");
+      keywordsDiv.classList.add("d-none");
+      webhookDiv.classList.add("d-none");
       submitText.classList.add("d-none");
-    } else if (isHeadlineLoaded && isTeaserLoaded) {
-      loadingDiv.classList.add("d-none")
-      submitText.classList.remove("d-none");
+    } else {
+      // Evaluate: Is generation done?
+      if (isHeadlineLoaded && isTeaserLoaded && isKeywordsLoaded && isSummaryLoaded) {
+        // Generation is done, hide laoding indicator
+        loadingDiv.classList.add("d-none");
+        // Show webhook and allow new text submission
+        webhookDiv.classList.remove("d-none");
+        submitText.classList.remove("d-none");
+      }
     }
   }
 
   submitText.addEventListener('click', (event) => {
     setLoading(true);
-    resultDiv.classList.add('d-none')
 
     let prompts = []
 
@@ -138,7 +185,7 @@ window.onload = function() {
         isHeadlineLoaded = true;
         resHeadline.innerText = data.output;
         setLoading(false);
-        resultDiv.classList.remove('d-none')
+        headlineDiv.classList.remove('d-none');
       });
     
     fetch('/generate/?' + new URLSearchParams({
@@ -151,8 +198,37 @@ window.onload = function() {
         isTeaserLoaded = true;
         resTeaser.innerText = data.output;
         setLoading(false);
-        resultDiv.classList.remove('d-none')
+        teaserDiv.classList.remove('d-none');
       });
+
+    if (model.value == 'bloomz') {
+      // Additionally generate summary and keywords
+      fetch('/generate/?' + new URLSearchParams({
+        fulltext: articleInput.value,
+        gen_type: "summary",
+        model: model.value
+      }))
+        .then((response) => response.json())
+        .then((data) => {
+          isSummaryLoaded = true;
+          resSummary.innerText = data.output;
+          setLoading(false);
+          summaryDiv.classList.remove('d-none');
+        });
+      
+      fetch('/generate/?' + new URLSearchParams({
+        fulltext: articleInput.value,
+        gen_type: "keywords",
+        model: model.value
+      }))
+        .then((response) => response.json())
+        .then((data) => {
+          isKeywordsLoaded = true;
+          resKeywords.innerText = data.output;
+          setLoading(false);
+          keywordsDiv.classList.remove('d-none');
+        });
+    }
   })
 }
 
