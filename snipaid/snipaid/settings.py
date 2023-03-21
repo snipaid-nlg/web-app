@@ -26,7 +26,7 @@ env = environ.Env(
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Take environment variables from .env file
-# environ.Env.read_env(os.path.join(Path(BASE_DIR).parent, '.env'))
+environ.Env.read_env(os.path.join(Path(BASE_DIR).parent, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,7 +39,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # False if not in os.environ because of casting above
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split()
 
 
 # Application definition
@@ -143,3 +143,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 BANANA_API_KEY = os.environ.get('BANANA_API_KEY')
 BANANA_MODEL_KEY = os.environ.get('BANANA_MODEL_KEY')
+
+BANANA_MODEL_KEY_GPTJ = os.environ.get('BANANA_MODEL_KEY_GPTJ', '')
+BANANA_MODEL_KEY_BLOOMZ = os.environ.get('BANANA_MODEL_KEY_BLOOMZ', '')
