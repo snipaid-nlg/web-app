@@ -174,4 +174,137 @@ class BloomzSnippetGenerator(SnippetGenerator):
             return self.generate_keywords(fulltext)
         else:
             raise Exception(f"Sorry, unknown gentype {gen_type} for bloomz model.")
+        
+class IgelSnippetGenerator(SnippetGenerator):
+    MODEL_KEY = settings.BANANA_MODEL_KEY_IGEL
+
+    # Instance method to generate a headline for a fulltext with igel model.
+    def generate_headline(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "Welche Überschrift passt am besten zum Inhalt des Artikels?",
+            "params": {
+                "min_new_tokens": 3,
+                "max_new_tokens": 20,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up output
+        output = output.replace("<|endoftext|>", "")
+        return output
+    
+    # Instance method to generate a teaser for a fulltext with igel model.
+    def generate_teaser(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "Generiere einen Teaser zu folgendem Artikel.",
+            "params": {
+                "min_new_tokens": 30,
+                "max_new_tokens": 60,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up output
+        output = output.replace("<|endoftext|>", "")
+        return output
+    
+    # Instance method to generate a summary for a fulltext with igel model.
+    def generate_summary(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "Fasse den folgenden Artikel in wenigen Sätzen zusammen.",
+            "params": {
+                "min_new_tokens": 50,
+                "max_new_tokens": 150,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up output
+        output = output.replace("<|endoftext|>", "")
+        return output
+    
+    # Instance method to generate a summary for a fulltext with igel model.
+    def generate_keywords(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "Nenne die zehn wichtigsten Keywords aus dem Text.",
+            "params": {
+                "min_new_tokens": 50,
+                "max_new_tokens": 150,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up output
+        output = output.replace("<|endoftext|>", "")
+        return output
+    
+    # Instance method to generate a derp for a fulltext with igel model.
+    def generate_serp(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "Wie könnten Title-Tag und Meta-Description auf der SERP zu diesem Artikel lauten?",
+            "params": {
+                "min_new_tokens": 50,
+                "max_new_tokens": 90,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up output
+        output = output.replace("<|endoftext|>", "")
+        return output
+    
+    # Instance method to generate a tweet for a fulltext with igel model.
+    def generate_tweet(self, fulltext):
+        # define inputs
+        model_inputs = {
+            "task_prefix": "",
+            "document": fulltext,
+            "prompt": "Schreibe einen Tweet über den Artikel.",
+            "params": {
+                "min_new_tokens": 50,
+                "max_new_tokens": 150,
+            }
+        }
+        # generate
+        out = banana.run(settings.BANANA_API_KEY, self.MODEL_KEY, model_inputs)
+        output = out['modelOutputs'][0]['output']
+        # clean up output
+        output = output.replace("<|endoftext|>", "")
+        return output
+    
+    def generate(self, gen_type, fulltext):
+        if gen_type == "headline":
+            return self.generate_headline(fulltext)
+        elif gen_type == "teaser":
+            return self.generate_teaser(fulltext)
+        elif gen_type == "summary":
+            return self.generate_summary(fulltext)
+        elif gen_type == "keywords":
+            return self.generate_keywords(fulltext)
+        elif gen_type == "serp":
+            return self.generate_serp(fulltext)
+        elif gen_type == "tweet":
+            return self.generate_tweet(fulltext)
+        else:
+            raise Exception(f"Sorry, unknown gentype {gen_type} for igel model.")
     

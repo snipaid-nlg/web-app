@@ -39,7 +39,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # False if not in os.environ because of casting above
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split()
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(" ")
 
 
 # Application definition
@@ -146,3 +146,4 @@ BANANA_MODEL_KEY = os.environ.get('BANANA_MODEL_KEY')
 
 BANANA_MODEL_KEY_GPTJ = os.environ.get('BANANA_MODEL_KEY_GPTJ', '')
 BANANA_MODEL_KEY_BLOOMZ = os.environ.get('BANANA_MODEL_KEY_BLOOMZ', '')
+BANANA_MODEL_KEY_IGEL = os.environ.get('BANANA_MODEL_KEY_IGEL', '')

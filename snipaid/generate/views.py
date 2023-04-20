@@ -1,8 +1,7 @@
 from django.shortcuts import render
 import banana_dev as banana
 from django.http import JsonResponse
-from django.conf import settings
-from .utils import BloomzSnippetGenerator, GPTJSnippetGenerator
+from .utils import BloomzSnippetGenerator, GPTJSnippetGenerator, IgelSnippetGenerator
 
 
 # Generate a headline or teaser depending on gen_type parameter with a given fulltext
@@ -13,13 +12,15 @@ def generate(request):
 
   if model == "gptj":
     generator = GPTJSnippetGenerator()
-    output = generator.generate(gen_type, fulltext)
   
   elif model == "bloomz":
     generator = BloomzSnippetGenerator()
-    output = generator.generate(gen_type, fulltext)
+
+  elif model == "snip-igel":
+    generator = IgelSnippetGenerator()
   
   else:
     raise Exception(f"Sorry, model {model} is unknown")
-
+  
+  output = generator.generate(gen_type, fulltext)
   return JsonResponse({"output": output})
